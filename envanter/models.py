@@ -16,8 +16,9 @@ class Kategori(models.Model):
         super(Kategori, self).save(*args, **kwargs)
 
     class Meta:
-       verbose_name = 'Kategori'
-       verbose_name_plural = 'Kategoriler'
+        verbose_name = 'Kategori'
+        verbose_name_plural = 'Kategoriler'
+
 
 class Urun(models.Model):
     PARA_BIRIMLERI = [
@@ -31,10 +32,11 @@ class Urun(models.Model):
     kategori = models.ForeignKey(Kategori, on_delete=models.CASCADE)
     aciklama = models.TextField(blank=True, null=True)
     fiyat = models.DecimalField(max_digits=10, decimal_places=2)
-    eski_fiyat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Eski fiyat alanı
+    eski_fiyat = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     stok_miktari = models.PositiveIntegerField()
     birim = models.CharField(max_length=50, choices=[('adet', 'Adet'), ('kilo', 'Kilo')])
     para_birimi = models.CharField(max_length=3, choices=PARA_BIRIMLERI, default='TL')
+    fotoğraf = models.ImageField(upload_to='urun_fotograflari/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -50,12 +52,17 @@ class Urun(models.Model):
         return self.isim
         
     class Meta:
-       verbose_name = 'Ürün'
-       verbose_name_plural = 'Ürünler'
+        verbose_name = 'Ürün'
+        verbose_name_plural = 'Ürünler'
+
 
 class UrunFoto(models.Model):
     urun = models.ForeignKey(Urun, related_name='fotolar', on_delete=models.CASCADE)
     foto = models.ImageField(upload_to='urun_fotograflari/')
 
     def __str__(self):
-        return f"{self.urun.isim} - Fotoğraf"
+        return self.urun.isim
+
+    class Meta:
+       verbose_name = 'Ürün Fotoğraf Ekleme'
+       verbose_name_plural = 'Ürün Fotoğraf Ekleme'

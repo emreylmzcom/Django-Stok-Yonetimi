@@ -1,0 +1,60 @@
+{% extends 'envanter/base.html' %}
+
+{% block title %}Ürün Listesi{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <h2>Kategoriler</h2>
+            <ul class="list-group">
+                {% for kategori in kategoriler %}
+                    <li class="list-group-item">
+                        <a href="?kategori_slug={{ kategori.slug }}">{{ kategori.isim }}</a>
+                        {% if kategori.alt_kategoriler.exists %}
+                            <ul>
+                                {% for alt_kategori in kategori.alt_kategoriler.all %}
+                                    <li>
+                                        <a href="?kategori_slug={{ alt_kategori.slug }}">{{ alt_kategori.isim }}</a>
+                                        {% if alt_kategori.alt_kategoriler.exists %}
+                                            <ul>
+                                                {% for alt_alt_kategori in alt_kategori.alt_kategoriler.all %}
+                                                    <li>
+                                                        <a href="?kategori_slug={{ alt_alt_kategori.slug }}">{{ alt_alt_kategori.isim }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <h1>Ürün Listesi</h1>
+            <div class="row">
+                {% for urun in urunler %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+
+                            {% for foto in urun.fotolar.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ foto.foto.url }}" class="card-img-top" alt="{{ urun.isim }}">
+                            </div>
+                            {% endfor %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ urun.isim }}</h5>
+                                <p class="card-text">{{ urun.fiyat }} {{ urun.para_birimi }}</p>
+                                <a href="{% url 'urun_detay' urun.slug %}" class="btn btn-primary">Detayları Gör</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
